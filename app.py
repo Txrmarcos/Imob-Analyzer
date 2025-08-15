@@ -222,7 +222,7 @@ with col1:
     st.markdown('<div class="input-group"><h3>📍 Localização do Terreno</h3></div>', unsafe_allow_html=True)
     address_input = st.text_input("Endereço Completo", placeholder="Ex: Avenida Paulista, 1578, São Paulo, SP", key="address")
     col1a, col1b = st.columns(2)
-    radius_input = col1a.selectbox("Raio de Análise", options=[300, 500, 700, 1000, 1500, 2000], index=2, format_func=lambda x: f"{x}m")
+    radius_input = col1a.selectbox("Raio de Análise", options=[300, 500, 700, 1000, 1500, 2000, 5000, 10000, 15000, 20000, 25000, 50000], index=2, format_func=lambda x: f"{x}m")
     area_terreno = col1b.number_input("Área do Terreno (m²)", min_value=10, max_value=50000, value=200, step=50)
 
 with col2:
