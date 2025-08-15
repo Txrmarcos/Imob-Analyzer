@@ -130,20 +130,22 @@ def get_dados_sidra(codigo_municipio):
         
     return dados
 
-# --- MODIFICAÇÃO AQUI ---
 @st.cache_data(ttl=3600)
-def get_detailed_nearby_places(lat, lon, radius, place_type, _gmaps_client):
-    """Busca por estabelecimentos próximos e obtém detalhes para cada um."""
+def get_detailed_nearby_places(lat, lon, radius, place_type, _gmaps_client, limit=20):
+    """Busca por estabelecimentos próximos e obtém detalhes para cada um, com um limite."""
     analysis = {'count': 0, 'avg_rating': 0, 'details': [], 'error': None}
     try:
+        # Etapa 1: Busca inicial (retorna até 20 locais)
         nearby_result = _gmaps_client.places_nearby(location=(lat, lon), radius=radius, type=place_type, language='pt-BR')
         places = nearby_result.get('results', [])
         analysis['count'] = len(places)
 
         detailed_places = []
         ratings = []
-        # Loop alterado: 'places[:limit]' virou 'places' para buscar detalhes de TODOS os resultados.
-        for place in places:
+        
+        # Etapa 2: Busca os detalhes apenas para os resultados até o limite definido.
+        # Isso garante que o app não vai congelar.
+        for place in places[:limit]: 
             place_id = place.get('place_id')
             if place_id:
                 details = _gmaps_client.place(place_id, fields=['name', 'rating', 'user_ratings_total', 'price_level'])
@@ -164,9 +166,6 @@ def get_detailed_nearby_places(lat, lon, radius, place_type, _gmaps_client):
     except Exception as e:
         analysis['error'] = f"Erro ao buscar '{place_type}': {e}"
     return analysis
-# --- FIM DA MODIFICAÇÃO ---
-
-
 # --- INTERFACE DO USUÁRIO ---
 
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
